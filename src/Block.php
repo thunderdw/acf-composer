@@ -509,6 +509,7 @@ abstract class Block extends Composer implements BlockContract
         return (new ComponentAttributeBag)
             ->class($this->getClasses())
             ->style($this->getInlineStyle())
+            ->merge(['id' => $this->block->anchor ?? null])
             ->filter(fn ($value) => filled($value) && $value !== ';');
     }
 
