@@ -502,6 +502,17 @@ abstract class Block extends Composer implements BlockContract
     }
 
     /**
+     * Retrieve the component attribute bag.
+     */
+    protected function getComponentAttributeBag(): ComponentAttributeBag
+    {
+        return (new ComponentAttributeBag)
+            ->class($this->getClasses())
+            ->style($this->getInlineStyle())
+            ->filter(fn ($value) => filled($value) && $value !== ';');
+    }
+
+    /**
      * Retrieve the block API version.
      */
     public function getApiVersion(): int
@@ -778,11 +789,6 @@ abstract class Block extends Composer implements BlockContract
         $this->style = $this->getStyle();
         $this->inlineStyle = $this->getInlineStyle();
 
-        $attributes = (new ComponentAttributeBag)
-            ->class($this->classes)
-            ->style($this->inlineStyle)
-            ->filter(fn ($value) => filled($value) && $value !== ';');
-
         if (! is_admin() && method_exists($this, 'assets')) {
             $instance = (array) ($this->block ?? []);
 
@@ -793,7 +799,7 @@ abstract class Block extends Composer implements BlockContract
 
         return $this->view($this->view, [
             'block' => $this,
-            'attributes' => $attributes,
+            'attributes' => $this->getComponentAttributeBag(),
         ]);
     }
 
